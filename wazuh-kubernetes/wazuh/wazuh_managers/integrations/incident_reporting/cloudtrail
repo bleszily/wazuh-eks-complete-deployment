@@ -1,0 +1,71 @@
+#!/var/ossec/framework/python/bin/python3
+
+import imaplib
+from importlib.util import spec_from_loader, module_from_spec
+from importlib.machinery import SourceFileLoader 
+import json
+import datetime
+from unicodedata import category
+from dateutil import tz
+
+accounts_file = open('/var/ossec/integrations/incident_reporting/accounts.json', 'r')
+accounts_data = json.loads(accounts_file.read())
+accounts_file.close()
+
+from_zone = tz.gettz('UTC')
+to_zone = tz.gettz('Europe/Lisbon')
+
+def parse(log):
+        source = 'CloudTrail'
+        siem_id = log['id']
+        summary = log['rule']['description']
+
+        account_id = log['data']['recipientAccountId']
+
+        village = accounts_data[account_id]['village']
+        team = accounts_data[account_id]['team']
+        account_name = accounts_data[account_id]['account_name']
+
+        first_seen = datetime.datetime.strptime(log['data']['eventTime'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=from_zone).astimezone(to_zone)
+        first_detected = datetime.datetime.strptime(log['timestamp'].split('+')[0].split('.')[0], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=from_zone).astimezone(to_zone)
+        last_seen = datetime.datetime.strptime(log['data']['eventTime'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=from_zone).astimezone(to_zone)
+
+        event_name = log['data']['eventName']
+
+        description = ''
+        description += '*Summary:* ' + summary + '\n'
+        description += '*Log Source:* ' + source + '\n'
+        description += '*SIEM ID/s:* ' + siem_id + '\n\n'
+        description += '*First seen:* ' + str(first_seen) + '\n'
+        description += '*First detected:* ' + str(first_detected) + '\n'
+        description += '*Last seen:* ' + str(last_seen) + '\n\n'
+        description += '*AWS Account:* #' + account_id + ' | ' + account_name + '\n'
+        description += '*Event Name:* ' + event_name
+        '''
+        # if root related activity or aws account creation open security incident
+
+        # Root console login
+        if event_name == 'ConsoleLogin' and log['data']['userIdentity']['type'] == 'Root':
+                description += '\n\n*Target/s:* Root User'
+                description += '*Threat Actor/s:* ' + log['data']['sourceIPAddress'] + '\n'
+                description += '*Pre-analysis:*'
+
+                if log['data']['responseElements']['ConsoleLogin'] == 'Success':
+                        category = 'Intrusion'
+                        subcategory = 'Compromised Account'
+
+                        impact = '1 - Critical'
+                        urgency = '1 - Critical'
+
+                        issue_title = 'Successful login for root user @ AWS account ' + log['data']['recipientAccountId']
+
+                elif log['data']['responseElements']['ConsoleLogin'] == 'Failure':
+                        category = 'Intrusion Attempt'
+                        subcategory = 'Login Attempt'
+
+                        impact = '4 - Low'
+                        urgency = '4 - Low'
+
+                        issue_title = 'Failed login attempt for root user @ AWS account ' + log['data']['recipientAccountId']
+        '''
+        return description

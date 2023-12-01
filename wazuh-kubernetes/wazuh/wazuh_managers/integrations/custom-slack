@@ -1,0 +1,173 @@
+#!/var/ossec/framework/python/bin/python3
+
+from importlib.util import spec_from_loader, module_from_spec
+from importlib.machinery import SourceFileLoader 
+import sys
+import json
+import datetime
+import os
+
+try:
+        import requests
+        from requests.auth import HTTPBasicAuth
+except Exception as e:
+        print("No module 'requests' found. Install: pip install requests")
+        sys.exit(1)
+
+headers = { "Content-Type": "application/json" }
+user = os.environ.get('jira_user').replace('\n', '')
+api_key = os.environ.get('jira_api_key').replace('\n', '')
+
+url = 'https://hooks.slack.com/services/T0LQL15A4/B03GWBK1XSA/rYGAQptL1uHn0eBC9XfE*****'
+
+# import external modules
+spec_slack_issues = spec_from_loader("slack_issues", SourceFileLoader("slack_issues", "/var/ossec/integrations/incident_reporting/jira"))
+slack_issues = module_from_spec(spec_slack_issues)
+spec_slack_issues.loader.exec_module(slack_issues)
+
+# Read configuration parameters
+alert_file = open(sys.argv[1])
+#alert_file = open('alert.json')
+
+# Read the alert file
+alert_json = json.loads(alert_file.read())
+alert_file.close()
+
+description = ''
+
+if 'guardduty' in alert_json['rule']['groups']:
+
+        # import external modules
+        spec_slack_guardduty = spec_from_loader("slack_guardduty", SourceFileLoader("slack_guardduty", "/var/ossec/integrations/incident_reporting/guardduty"))
+        slack_guardduty = module_from_spec(spec_slack_guardduty)
+        spec_slack_guardduty.loader.exec_module(slack_guardduty)
+
+        # parse guardduty logs
+        description = slack_guardduty.parse(alert_json)
+
+elif 'cloudtrail' in alert_json['rule']['groups']:
+
+        # import external modules
+        spec_slack_cloudtrail = spec_from_loader("slack_cloudtrail", SourceFileLoader("slack_cloudtrail", "/var/ossec/integrations/incident_reporting/cloudtrail"))
+        slack_cloudtrail = module_from_spec(spec_slack_cloudtrail)
+        spec_slack_cloudtrail.loader.exec_module(slack_cloudtrail)
+
+        # parse cloudtrail logs
+        description = slack_cloudtrail.parse(alert_json)
+
+elif 'scorecard' in alert_json['rule']['groups']:
+        
+        # import external modules
+        spec_slack_securityscorecard = spec_from_loader("slack_securityscorecard", SourceFileLoader("slack_securityscorecard", "/var/ossec/integrations/incident_reporting/securityscorecard"))
+        slack_securityscorecard = module_from_spec(spec_slack_securityscorecard)
+        spec_slack_securityscorecard.loader.exec_module(slack_securityscorecard)
+
+        # parse securityscorecard logs
+        description = slack_securityscorecard.parse(alert_json)
+
+elif 'cloudflare' in alert_json['rule']['groups']:
+        
+        # import external modules
+        spec_slack_cloudflare = spec_from_loader("slack_cloudflare", SourceFileLoader("slack_cloudflare", "/var/ossec/integrations/incident_reporting/cloudflare"))
+        slack_cloudflare = module_from_spec(spec_slack_cloudflare)
+        spec_slack_cloudflare.loader.exec_module(slack_cloudflare)
+
+        # parse cloudflare logs
+        description = slack_cloudflare.parse(alert_json)
+
+else:
+        sys.exit(0)
+
+payload = {}
+payload['blocks'] = []
+
+header = {}
+header['type'] = 'header'
+header['text'] = {}
+header['text']['type'] = 'plain_text'
+header['text']['text'] = alert_json['rule']['description'][:147] + '...'
+
+section = {}
+section['type'] = 'section'
+section['fields'] = []
+
+field = {}
+field['type'] = 'mrkdwn'
+
+field['text'] = description
+
+section['fields'].append(field)
+payload['blocks'].append(header)
+payload['blocks'].append(section)
+
+x = requests.post(url, data = json.dumps(payload))
+
+sys.exit(0)
+
+# # Extract issue fields
+# alert_level = alert_json['rule']['level']
+
+# title = 'Live | ' + alert_json['rule']['description']
+
+# description = ''
+
+# description += 'Summary: ' + alert_json['rule']['description'] + '\n'
+
+# if 'data' in alert_json:
+#         if 'about' in alert_json['data']:
+#                 description += 'About: ' + alert_json['data']['about'] + '\n'
+#         if 'village' in alert_json['data']:
+#                 description += 'Village: ' + alert_json['data']['village'] + '\n'
+#         if 'account' in alert_json['data']:
+#                 description += 'AWS Account: #' + alert_json['data']['account'] + '\n'
+#         if 'recipientAccountId' in alert_json['data']:
+#                 description += 'AWS Account: #' + alert_json['data']['recipientAccountId'] + '\n'
+#         if 'date-time' in alert_json['data']:
+#                 date = datetime.datetime.strptime(alert_json['data']['date-time'], '%Y-%m-%dT%H:%M:%SZ')
+#                 description += 'First seen: ' + str(date) + '\n'
+#         elif 'eventTime' in alert_json['data']:
+#                 date = datetime.datetime.strptime(alert_json['data']['eventTime'], '%Y-%m-%dT%H:%M:%SZ')
+#                 description += 'First seen: ' + str(date) + '\n'
+
+# if 'timestamp' in alert_json:
+#         date = alert_json['timestamp'].split('+')
+#         date = date[0].split('.')
+#         date = datetime.datetime.strptime(date[0], '%Y-%m-%dT%H:%M:%S')
+#         description += 'First detected: ' + str(date) + '\n'
+
+# # Generate request
+# msg_data = {}
+# msg_data['message'] = title
+# msg_data['description'] = description
+# msg_data['responders'] = []
+# msg_data['responders'].append({'id': '4513b7ea-3b91-438f-b7e4-e3e54af9147c', 'type': 'team'})
+# msg_data['responders'].append({'name': 'Cyber Defense', 'type': 'team'})
+# msg_data['visibleTo'] = []
+# msg_data['visibleTo'].append({'id': '4513b7ea-3b91-438f-b7e4-e3e54af9147c', 'type': 'team'})
+# msg_data['visibleTo'].append({'name': 'Cyber Defense', 'type': 'team'})
+# msg_data['tags'] = []
+# msg_data['tags'].append('OverwriteQuietHours')
+# msg_data['tags'].append('Critical')
+# msg_data['priority'] = 'P2'
+
+# msg_data['details'] = {}
+
+# full_log = json.loads(alert_json['full_log'])
+
+# # Append fields
+# for key,value in full_log.items():
+
+#         if str(type(value)) == '<class \'dict\'>':
+#                 for key2,value2 in value.items():
+#                         if str(type(value2)) == '<class \'dict\'>':
+#                                 for key3,value3 in value.items():
+#                                         index = key + '.' + key2 + '.' + key3
+#                                         msg_data['details'][index] = str(value3)
+#                         else:
+#                                 index = key + '.' + key2
+#                                 msg_data['details'][index] = str(value2)
+#         else:
+#            msg_data['details'][key] = str(value)
+
+# response = requests.post(url, data=json.dumps(msg_data), headers=headers)
+# print(response.text)

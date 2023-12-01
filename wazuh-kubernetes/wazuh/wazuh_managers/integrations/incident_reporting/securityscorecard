@@ -1,0 +1,27 @@
+#!/var/ossec/framework/python/bin/python3
+
+from importlib.util import spec_from_loader, module_from_spec
+from importlib.machinery import SourceFileLoader 
+import json
+import datetime
+from dateutil import tz
+
+accounts_file = open('/var/ossec/integrations/incident_reporting/accounts.json', 'r')
+accounts_data = json.loads(accounts_file.read())
+accounts_file.close()
+
+from_zone = tz.gettz('UTC')
+to_zone = tz.gettz('Europe/Lisbon')
+
+def parse(log):
+        source = 'SecurityScorecard'
+        siem_id = log['id']
+        
+        first_detected = datetime.datetime.strptime(log['timestamp'].split('+')[0].split('.')[0], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=from_zone).astimezone(to_zone)
+
+        description = ''
+        description += '*Log Source:* ' + source + '\n'
+        description += '*SIEM ID/s:* ' + siem_id + '\n\n'
+        description += '*First detected:* ' + str(first_detected) + '\n'
+        
+        return description

@@ -1,0 +1,1039 @@
+<group name="amazon,aws,guardduty,low,custom_rule,">
+    <rule id="100301" level="3">
+        <field name="aws.type">Discovery:IAMUser/AnomalousBehavior</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to discover resources was invoked in an anomalous way.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,">
+    <rule id="100302" level="3">
+        <field name="aws.type">Impact:EC2/SuspiciousDomainRequest.Reputation</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is querying a low reputation domain name that is suspected of being malicious.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100303" level="3">
+        <field name="aws.type">Impact:EC2/WinRMBruteForce</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is performing an outbound Windows Remote Management brute force attack.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100304" level="3">
+        <field name="aws.type">Policy:IAMUser/RootCredentialUsage</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API was invoked using root credentials.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100305" level="3">
+        <field name="aws.type">Policy:S3/AccountBlockPublicAccessDisabled</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An IAM entity invoked an API used to disable S3 Block Public Access on an account.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100306" level="3">
+        <field name="aws.type">Policy:S3/BucketBlockPublicAccessDisabled</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An IAM entity invoked an API used to disable S3 Block Public Access on a bucket.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,">
+    <rule id="100307" level="3">
+        <field name="aws.type">Recon:EC2/PortProbeUnprotectedPort</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance has an unprotected port that is being probed by a known malicious host.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100308" level="3">
+        <field name="aws.type">Stealth:IAMUser/CloudTrailLoggingDisabled</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | AWS CloudTrail logging was disabled.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100309" level="3">
+        <field name="aws.type">Stealth:IAMUser/PasswordPolicyChange</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Account password policy was weakened.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,">
+    <rule id="100310" level="3">
+        <field name="aws.type">Stealth:S3/ServerAccessLoggingDisabled</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | S3 server access logging was disabled for a bucket.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,">
+    <rule id="100311" level="3">
+        <field name="aws.type">UnauthorizedAccess:EC2/RDPBruteForce</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance has been involved in RDP brute force attacks.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,">
+    <rule id="100312" level="3">
+        <field name="aws.type">UnauthorizedAccess:EC2/SSHBruteForce</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance has been involved in SSH brute force attacks.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,">
+    <rule id="100313" level="3">
+        <field name="aws.type">Discovery:S3/AnomalousBehavior</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to discover S3 objects was invoked in an anomalous way.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,">
+    <rule id="100314" level="5">
+        <field name="aws.type">Backdoor:EC2/Spambot</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is exhibiting unusual behavior by communicating with a remote host on port 25.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,">
+    <rule id="100315" level="5">
+        <field name="aws.type">Behavior:EC2/NetworkPortUnusual</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is communicating with a remote host on an unusual server port.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100316" level="5">
+        <field name="aws.type">Behavior:EC2/TrafficVolumeUnusual</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is generating unusually large amounts of network traffic to a remote host.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,">
+    <rule id="100317" level="5">
+        <field name="aws.type">CredentialAccess:IAMUser/AnomalousBehavior</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API used to gain access to an AWS environment was invoked in an anomalous way.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,">
+    <rule id="100318" level="5">
+        <field name="aws.type">DefenseEvasion:IAMUser/AnomalousBehavior</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API used to evade defensive measures was invoked in an anomalous way.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100319" level="5">
+        <field name="aws.type">Discovery:Kubernetes/MaliciousIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to discover resources in a Kubernetes cluster was invoked from a known malicious IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100320" level="5">
+        <field name="aws.type">Discovery:Kubernetes/MaliciousIPCaller.Custom</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to discover resources in a Kubernetes cluster was invoked from an IP address on a custom threat list.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100321" level="5">
+        <field name="aws.type">Discovery:Kubernetes/SuccessfulAnonymousAccess</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to discover resources in a Kubernetes cluster was invoked by an unauthenticated user.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100322" level="5">
+        <field name="aws.type">Discovery:Kubernetes/TorIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to discover resources in a Kubernetes cluster was invoked from a Tor exit node IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100323" level="5">
+        <field name="aws.type">Discovery:S3/TorIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An S3 API was invoked from a Tor exit node IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100324" level="5">
+        <field name="aws.type">Execution:Kubernetes/ExecInKubeSystemPod</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | A command was executed inside a pod within the kube-system namespace.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100325" level="5">
+        <field name="aws.type">Impact:EC2/AbusedDomainRequest.Reputation</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is querying a low reputation domain name that is associated with known abused domains.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100326" level="5">
+        <field name="aws.type">InitialAccess:IAMUser/AnomalousBehavior</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to gain unauthorized access to an AWS environment was invoked in an anomalous way.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,">
+    <rule id="100327" level="5">
+        <field name="aws.type">PenTest:IAMUser/KaliLinux</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API was invoked from a Kali Linux EC2 machine.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,">
+    <rule id="100328" level="5">
+        <field name="aws.type">PenTest:IAMUser/ParrotLinux</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API was invoked from a Parrot Security Linux machine.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,">
+    <rule id="100329" level="5">
+        <field name="aws.type">PenTest:IAMUser/PentooLinux</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API was invoked from a Pentoo Linux machine.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,">
+    <rule id="100330" level="5">
+        <field name="aws.type">PenTest:S3/KaliLinux</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An S3 API was invoked from a Kali Linux machine.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,">
+    <rule id="100331" level="5">
+        <field name="aws.type">PenTest:S3/ParrotLinux</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An S3 API was invoked from a Parrot Security Linux machine.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,">
+    <rule id="100332" level="5">
+        <field name="aws.type">PenTest:S3/PentooLinux</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An S3 API was invoked from a Pentoo Linux machine.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100333" level="5">
+        <field name="aws.type">Persistence:IAMUser/AnomalousBehavior</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to maintain unauthorized access to an AWS environment was invoked in an anomalous way.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100334" level="5">
+        <field name="aws.type">Persistence:Kubernetes/ContainerWithSensitiveMount</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | A container was launched with a sensitive external host path mounted inside.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100335" level="5">
+        <field name="aws.type">Persistence:Kubernetes/MaliciousIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to obtain persistent access to a Kubernetes cluster was invoked from a known malicious IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100336" level="5">
+        <field name="aws.type">Persistence:Kubernetes/MaliciousIPCaller.Custom</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to obtain persistent access to a Kubernetes cluster was invoked from an IP address on a custom threat list.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100337" level="5">
+        <field name="aws.type">Persistence:Kubernetes/TorIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to obtain persistent access to a Kubernetes cluster was invoked from a Tor exit node IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100338" level="5">
+        <field name="aws.type">Policy:Kubernetes/KubeflowDashboardExposed</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | The Kubeflow dashboard for a Kubernetes cluster was exposed to the Internet.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100339" level="5">
+        <field name="aws.type">Policy:Kubernetes/ExposedDashboard</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | The dashboard for a Kubernetes cluster was exposed to the internet.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100340" level="5">
+        <field name="aws.type">PrivilegeEscalation:IAMUser/AnomalousBehavior</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to obtain high-level permissions to an AWS environment was invoked in an anomalous way.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,">
+    <rule id="100341" level="5">
+        <field name="aws.type">PrivilegeEscalation:Kubernetes/PrivilegedContainer</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | A privileged container with root level access was launched on your Kubernetes cluster.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100342" level="5">
+        <field name="aws.type">Recon:EC2/Portscan</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is performing outbound port scans to a remote host.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100343" level="5">
+        <field name="aws.type">Recon:IAMUser/MaliciousIPCaller.Custom</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API was invoked from a known malicious IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100344" level="5">
+        <field name="aws.type">Recon:IAMUser/TorIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API was invoked from a Tor exit node IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100345" level="5">
+        <field name="aws.type">Trojan:EC2/BlackholeTraffic</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is attempting to communicate with an IP address of a remote host that is a known black hole.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100346" level="5">
+        <field name="aws.type">Trojan:EC2/BlackholeTraffic!DNS</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is querying a domain name that is being redirected to a black hole IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100347" level="5">
+        <field name="aws.type">Trojan:EC2/DropPoint</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is attempting to communicate with an IP address of a remote host that is known to hold credentials and other stolen data captured by malware.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100348" level="5">
+        <field name="aws.type">Trojan:EC2/DropPoint!DNS</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is querying a domain name of a remote host that is known to hold credentials and other stolen data captured by malware.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100349" level="5">
+        <field name="aws.type">UnauthorizedAccess:EC2/MaliciousIPCaller.Custom</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is making connections to an IP address on a custom threat list.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100350" level="5">
+        <field name="aws.type">UnauthorizedAccess:IAMUser/ConsoleLoginSuccess.B</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Multiple worldwide successful console logins for the same IAM user were observed.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100351" level="5">
+        <field name="aws.type">UnauthorizedAccess:IAMUser/MaliciousIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API was invoked from a known malicious IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100352" level="5">
+        <field name="aws.type">UnauthorizedAccess:IAMUser/MaliciousIPCaller.Custom</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API was invoked from an IP address on a custom threat list.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100353" level="5">
+        <field name="aws.type">UnauthorizedAccess:IAMUser/TorIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API was invoked from a Tor exit node IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100354" level="5">
+        <field name="aws.type">Recon:IAMUser/MaliciousIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API was invoked from a known malicious IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,">
+    <rule id="100355" level="5">
+        <field name="aws.type">Impact:S3/AnomalousBehavior.Write</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An IAM entity invoked an S3 API that attempts to write data in a suspicious way.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100356" level="8">
+        <field name="aws.type">Backdoor:EC2/C&#38;CActivity.B</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is querying an IP that is associated with a known command and control server.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100357" level="8">
+        <field name="aws.type">Backdoor:EC2/C&#38;CActivity.B!DNS</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is querying a domain name that is associated with a known command and control server.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100358" level="8">
+        <field name="aws.type">Backdoor:EC2/DenialOfService.Dns</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is behaving in a manner that may indicate it is being used to perform a Denial of Service (DoS) attack using the DNS protocol.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100359" level="8">
+        <field name="aws.type">Backdoor:EC2/DenialOfService.Tcp</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is behaving in a manner indicating it is being used to perform a Denial of Service (DoS) attack using the TCP protocol.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100360" level="8">
+        <field name="aws.type">Backdoor:EC2/DenialOfService.Udp</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is behaving in a manner indicating it is being used to perform a Denial of Service (DoS) attack using the UDP protocol.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100361" level="8">
+        <field name="aws.type">Backdoor:EC2/DenialOfService.UdpOnTcpPorts</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is behaving in a manner that may indicate it is being used to perform a Denial of Service (DoS) attack using the UDP protocol on a TCP port.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100362" level="8">
+        <field name="aws.type">Backdoor:EC2/DenialOfService.UnusualProtocol</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is behaving in a manner that may indicate it is being used to perform a Denial of Service (DoS) attack using an unusual protocol.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100363" level="8">
+        <field name="aws.type">CredentialAccess:Kubernetes/MaliciousIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to access credentials or secrets in a Kubernetes cluster was invoked from a known malicious IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100364" level="8">
+        <field name="aws.type">CredentialAccess:Kubernetes/MaliciousIPCaller.Custom</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to access credentials or secrets in a Kubernetes cluster was invoked from an IP address on a custom threat list.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100365" level="8">
+        <field name="aws.type">CredentialAccess:Kubernetes/SuccessfulAnonymousAccess</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to access credentials or secrets in a Kubernetes cluster was invoked by an unauthenticated user.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100366" level="8">
+        <field name="aws.type">CredentialAccess:Kubernetes/TorIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to access credentials or secrets in a Kubernetes cluster was invoked from a Tor exit node IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100367" level="8">
+        <field name="aws.type">CryptoCurrency:EC2/BitcoinTool.B!DNS</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is querying a domain name that is associated with cryptocurrency-related activity.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100368" level="8">
+        <field name="aws.type">DefenseEvasion:Kubernetes/MaliciousIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to evade defensive measures was invoked from a known malicious IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100369" level="8">
+        <field name="aws.type">DefenseEvasion:Kubernetes/MaliciousIPCaller.Custom</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to evade defensive measures was invoked from an IP address on a custom threat list.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100370" level="8">
+        <field name="aws.type">DefenseEvasion:Kubernetes/SuccessfulAnonymousAccess</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to evade defensive measures was invoked by an unauthenticated user.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100371" level="8">
+        <field name="aws.type">DefenseEvasion:Kubernetes/TorIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to evade defensive measures was invoked from a Tor exit node IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100372" level="8">
+        <field name="aws.type">An S3 API was invoked from an IP address on a custom threat list.</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | </description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,">
+    <rule id="100373" level="8">
+        <field name="aws.type">Exfiltration:IAMUser/AnomalousBehavior</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to collect data from an AWS environment was invoked in an anomalous way.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100374" level="8">
+        <field name="aws.type">Exfiltration:S3/MaliciousIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An S3 API commonly used to collect data from an AWS environment was invoked from a known malicious IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100375" level="8">
+        <field name="aws.type">Impact:EC2/BitcoinDomainRequest.Reputation</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is querying a low reputation domain name that is associated with cryptocurrency-related activity.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100376" level="8">
+        <field name="aws.type">Impact:EC2/MaliciousDomainRequest.Reputation</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is querying a low reputation domain that is associated with known malicious domains.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100377" level="8">
+        <field name="aws.type">Impact:EC2/PortSweep</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is probing a port on a large number of IP addresses.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100378" level="8">
+        <field name="aws.type">Impact:IAMUser/AnomalousBehavior</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to tamper with data or processes in an AWS environment was invoked in an anomalous way.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100379" level="8">
+        <field name="aws.type">Impact:Kubernetes/MaliciousIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to tamper with resources in a Kubernetes cluster was invoked from a known malicious IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100380" level="8">
+        <field name="aws.type">Impact:Kubernetes/MaliciousIPCaller.Custom</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to tamper with resources in a Kubernetes cluster was invoked from an IP address on a custom threat list.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100381" level="8">
+        <field name="aws.type">Impact:Kubernetes/SuccessfulAnonymousAccess</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to tamper with resources in a Kubernetes cluster was invoked by an unauthenticated user.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100382" level="8">
+        <field name="aws.type">Impact:Kubernetes/TorIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to tamper with resources in a Kubernetes cluster was invoked from a Tor exit node IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100383" level="8">
+        <field name="aws.type">Impact:S3/MaliciousIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An S3 API commonly used to tamper with data or processes in an AWS environment was invoked from a known malicious IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100384" level="8">
+        <field name="aws.type">Persistence:Kubernetes/SuccessfulAnonymousAccess</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to obtain high-level permissions to a Kubernetes cluster was invoked by an unauthenticated user.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100385" level="8">
+        <field name="aws.type">Policy:Kubernetes/AdminAccessToDefaultServiceAccount</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | The default service account was granted admin privileges on a Kubernetes cluster.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100386" level="8">
+        <field name="aws.type">Policy:Kubernetes/AnonymousAccessGranted</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | The system:anonymous user was granted API permission on a Kubernetes cluster.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100387" level="8">
+        <field name="aws.type">Policy:S3/BucketAnonymousAccessGranted</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An IAM principal has granted access to an S3 bucket to the internet by changing bucket policies or ACLs.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100388" level="8">
+        <field name="aws.type">Policy:S3/BucketPublicAccessGranted</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An IAM principal has granted public access to an S3 bucket to all AWS users by changing bucket policies or ACLs.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,">
+    <rule id="100389" level="8">
+        <field name="aws.type">Recon:EC2/PortProbeEMRUnprotectedPort</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance has an unprotected EMR related port which is being probed by a known malicious host.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100390" level="8">
+        <field name="aws.type">Trojan:EC2/DGADomainRequest.B</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is querying algorithmically generated domains.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100391" level="8">
+        <field name="aws.type">Trojan:EC2/DGADomainRequest.C!DNS</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is querying algorithmically generated domains.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100392" level="8">
+        <field name="aws.type">Trojan:EC2/DNSDataExfiltration</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is exfiltrating data through DNS queries.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100393" level="8">
+        <field name="aws.type">Trojan:EC2/DriveBySourceTraffic!DNS</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is querying a domain name of a remote host that is a known source of Drive-By download attacks.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100394" level="8">
+        <field name="aws.type">Trojan:EC2/PhishingDomainRequest!DNS</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is querying domains involved in phishing attacks.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,">
+    <rule id="100395" level="8">
+        <field name="aws.type">UnauthorizedAccess:EC2/MetadataDNSRebind</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is performing DNS lookups that resolve to the instance metadata service.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,">
+    <rule id="100396" level="8">
+        <field name="aws.type">UnauthorizedAccess:EC2/TorClient</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is performing DNS lookups that resolve to the instance metadata service.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100397" level="8">
+        <field name="aws.type">UnauthorizedAccess:EC2/TorRelay</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is making connections to a Tor network as a Tor relay.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,">
+    <rule id="100398" level="8">
+        <field name="aws.type">UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration.InsideAWS</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Credentials that were created exclusively for an EC2 instance through an Instance launch role are being used from another account within AWS.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100399" level="8">
+        <field name="aws.type">UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration.OutsideAWS</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Credentials that were created exclusively for an EC2 instance through an Instance launch role are being used from an external IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100400" level="8">
+        <field name="aws.type">UnauthorizedAccess:S3/MaliciousIPCaller.Custom</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An S3 API was invoked from an IP address on a custom threat list.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100401" level="8">
+        <field name="aws.type">UnauthorizedAccess:S3/TorIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An S3 API was invoked from a Tor exit node IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100402" level="8">
+        <field name="aws.type">CryptoCurrency:EC2/BitcoinTool.B</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is querying an IP address that is associated with cryptocurrency-related activity.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100403" level="8">
+        <field name="aws.type">Discovery:S3/MaliciousIPCaller</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An S3 API commonly used to discover resources in an AWS environment was invoked from a known malicious IP address.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,">
+    <rule id="100404" level="8">
+        <field name="aws.type">Exfiltration:S3/AnomalousBehavior</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An IAM entity invoked an S3 API in a suspicious way.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100405" level="8">
+        <field name="aws.type">Impact:S3/AnomalousBehavior.Delete</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An IAM entity invoked an S3 API that attempts to delete data in a suspicious way.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100406" level="8">
+        <field name="aws.type">Impact:S3/AnomalousBehavior.Permission</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An API commonly used to set the access control list (ACL) permissions was invoked in an anomalous way.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100407" level="3">
+        <field name="aws.type">Execution:EC2/SuspiciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is performing an outbound Windows Remote Management brute force attack.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100408" level="5">
+        <field name="aws.type">Execution:EC2/SuspiciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is performing an outbound Windows Remote Management brute force attack.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100409" level="8">
+        <field name="aws.type">Execution:EC2/SuspiciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | An EC2 instance is performing an outbound Windows Remote Management brute force attack.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100410" level="3">
+        <field name="aws.type">Execution:ECS/MaliciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected on ECS Cluster.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100411" level="3">
+        <field name="aws.type">Execution:ECS/MaliciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected on ECS Cluster.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100412" level="3">
+        <field name="aws.type">Execution:ECS/MaliciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected on ECS Cluster.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100413" level="3">
+        <field name="aws.type">Execution:Container/MaliciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected Container</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100414" level="5">
+        <field name="aws.type">Execution:Container/MaliciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected Container</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100415" level="8">
+        <field name="aws.type">Execution:Container/MaliciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected Container</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100416" level="3">
+        <field name="aws.type">Execution:Kubernetes/SuspiciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected on EKS Cluster.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100417" level="5">
+        <field name="aws.type">Execution:Kubernetes/SuspiciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected on EKS Cluster.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100418" level="8">
+        <field name="aws.type">Execution:Kubernetes/SuspiciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected on EKS Cluster.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100419" level="3">
+        <field name="aws.type">Execution:Kubernetes/MaliciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected on EKS Cluster.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100420" level="5">
+        <field name="aws.type">Execution:Kubernetes/MaliciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected on EKS Cluster.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100421" level="8">
+        <field name="aws.type">Execution:Kubernetes/MaliciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected on EKS Cluster.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100422" level="3">
+        <field name="aws.type">Execution:Container/SuspiciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected on Container.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100423" level="5">
+        <field name="aws.type">Execution:Container/SuspiciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected on Container.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100424" level="8">
+        <field name="aws.type">Execution:Container/SuspiciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected on Container.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100425" level="3">
+        <field name="aws.type">Execution:ECS/SuspiciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected on ECS Cluster.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100426" level="5">
+        <field name="aws.type">Execution:ECS/SuspiciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected on ECS Cluster.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100427" level="8">
+        <field name="aws.type">Execution:ECS/SuspiciousFile</field>
+        <field name="aws.source">guardduty</field>
+        <description>GuardDuty | Security risk(s) detected on ECS Cluster.</description>
+    </rule>
+</group>
+
+<group name="amazon,aws,guardduty,low,custom_rule,oncall,">
+    <rule id="100428" level="3">
+        <field name="aws.source">guardduty</field>
+        <field name="aws.severity" type="pcre2">[1-3].?[0-9]?</field>
+        <description>GuardDuty | Unknown use case: $(aws.type)</description>
+    </rule>
+</group>
+  
+<group name="amazon,aws,guardduty,medium,custom_rule,oncall,">
+    <rule id="100429" level="5">
+        <field name="aws.source">guardduty</field>
+        <field name="aws.severity" type="pcre2">[4-6].?[0-9]?</field>
+        <description>GuardDuty | Unknown use case: $(aws.type)</description>
+    </rule>
+</group>
+  
+<group name="amazon,aws,guardduty,high,custom_rule,oncall,">
+    <rule id="100430" level="8">
+        <field name="aws.source">guardduty</field>
+        <field name="aws.severity" type="pcre2">[7-8].?[0-9]?</field>
+        <description>GuardDuty | Unknown use case: $(aws.type)</description>
+    </rule>
+</group>

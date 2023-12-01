@@ -1,0 +1,100 @@
+#!/var/ossec/framework/python/bin/python3
+
+from pydoc import describe
+import sys
+import json
+import datetime
+
+try:
+        import requests
+        from requests.auth import HTTPBasicAuth
+except Exception as e:
+        print("No module 'requests' found. Install: pip install requests")
+        sys.exit(1)
+
+url ='https://api.opsgenie.com/v2/alerts'
+access_token = '3f521b94-e74a-432b-a133-5a8******'
+
+headers = {
+    'Content-Type':'application/json',
+    'Authorization': 'GenieKey {}'.format(access_token)
+}
+
+# Set the project attributes
+
+# Read configuration parameters
+alert_file = open(sys.argv[1])
+
+# Read the alert file
+alert_json = json.loads(alert_file.read())
+alert_file.close()
+
+# Extract issue fields
+alert_level = alert_json['rule']['level']
+
+title = 'Live | ' + alert_json['rule']['description']
+
+description = ''
+
+description += 'Summary: ' + alert_json['rule']['description'] + '\n'
+
+if 'data' in alert_json:
+        if 'about' in alert_json['data']:
+                description += 'About: ' + alert_json['data']['about'] + '\n'
+        if 'village' in alert_json['data']:
+                description += 'Village: ' + alert_json['data']['village'] + '\n'
+        if 'account' in alert_json['data']:
+                description += 'AWS Account: #' + alert_json['data']['account'] + '\n'
+        if 'recipientAccountId' in alert_json['data']:
+                description += 'AWS Account: #' + alert_json['data']['recipientAccountId'] + '\n'
+        if 'date-time' in alert_json['data']:
+                date = datetime.datetime.strptime(alert_json['data']['date-time'], '%Y-%m-%dT%H:%M:%SZ')
+                description += 'First seen: ' + str(date) + '\n'
+        elif 'eventTime' in alert_json['data']:
+                date = datetime.datetime.strptime(alert_json['data']['eventTime'], '%Y-%m-%dT%H:%M:%SZ')
+                description += 'First seen: ' + str(date) + '\n'
+
+if 'timestamp' in alert_json:
+        date = alert_json['timestamp'].split('+')
+        date = date[0].split('.')
+        date = datetime.datetime.strptime(date[0], '%Y-%m-%dT%H:%M:%S')
+        description += 'First detected: ' + str(date) + '\n'
+
+# Generate request
+msg_data = {}
+msg_data['message'] = title
+msg_data['description'] = description
+msg_data['responders'] = []
+msg_data['responders'].append({'id': '4513b7ea-3b91-438f-b7e4-e3e54af9147c', 'type': 'team'})
+msg_data['responders'].append({'name': 'Cyber Defense', 'type': 'team'})
+msg_data['visibleTo'] = []
+msg_data['visibleTo'].append({'id': '4513b7ea-3b91-438f-b7e4-e3e54af9147c', 'type': 'team'})
+msg_data['visibleTo'].append({'name': 'Cyber Defense', 'type': 'team'})
+msg_data['tags'] = []
+msg_data['tags'].append('OverwriteQuietHours')
+msg_data['tags'].append('Critical')
+msg_data['priority'] = 'P2'
+
+msg_data['details'] = {}
+
+full_log = json.loads(alert_json['full_log'])
+
+# Append fields
+for key,value in full_log.items():
+
+        if str(type(value)) == '<class \'dict\'>':
+                for key2,value2 in value.items():
+                        if str(type(value2)) == '<class \'dict\'>':
+                                for key3,value3 in value.items():
+                                        index = key + '.' + key2 + '.' + key3
+                                        msg_data['details'][index] = str(value3)
+                        else:
+                                index = key + '.' + key2
+                                msg_data['details'][index] = str(value2)
+        else:
+           msg_data['details'][key] = str(value)
+
+response = requests.post(url, data=json.dumps(msg_data), headers=headers)
+print(response.text)
+
+sys.exit(0)

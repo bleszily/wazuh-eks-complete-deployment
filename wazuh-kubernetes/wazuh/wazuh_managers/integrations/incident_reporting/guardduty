@@ -1,0 +1,150 @@
+#!/var/ossec/framework/python/bin/python3
+
+from importlib.util import spec_from_loader, module_from_spec
+from importlib.machinery import SourceFileLoader 
+import json
+import datetime
+from dateutil import tz
+
+spec = spec_from_loader("slack_issues", SourceFileLoader("slack_issues", "/var/ossec/integrations/incident_reporting/jira"))
+slack_issues = module_from_spec(spec)
+spec.loader.exec_module(slack_issues)
+
+accounts_file = open('/var/ossec/integrations/incident_reporting/accounts.json', 'r')
+accounts_data = json.loads(accounts_file.read())
+accounts_file.close()
+
+from_zone = tz.gettz('UTC')
+to_zone = tz.gettz('Europe/Lisbon')
+
+def parse(log):
+        title = log['rule']['description']
+        source = 'GuardDuty'
+        siem_id = log['id']
+        summary = log['data']['aws']['description']
+
+        account_id = log['data']['aws']['accountId']
+
+        village = accounts_data[account_id]['village']
+        team = accounts_data[account_id]['team']
+        account_name = accounts_data[account_id]['account_name']
+   #Changed the datetime log template - Blessed Uyo
+        # first_seen = datetime.datetime.strptime(log['data']['aws']['updatedAt'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=from_zone).astimezone(to_zone)
+        # first_detected = datetime.datetime.strptime(log['timestamp'].split('+')[0].split('.')[0], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=from_zone).astimezone(to_zone)
+        # last_seen = datetime.datetime.strptime(log['data']['aws']['updatedAt'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=from_zone).astimezone(to_zone)
+        first_seen = datetime.datetime.strptime(log['data']['aws']['updatedAt'].split('.')[0]+'Z', '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=from_zone).astimezone(to_zone)
+        first_detected = datetime.datetime.strptime(log['timestamp'].split('+')[0].split('.')[0], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=from_zone).astimezone(to_zone)
+        last_seen = datetime.datetime.strptime(log['data']['aws']['updatedAt'].split('.')[0]+'Z', '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=from_zone).astimezone(to_zone)
+
+        guardduty_id = log['data']['aws']['id']
+        region = log['data']['aws']['region']
+
+        alert_type = log['data']['aws']['type']
+
+        description = ''
+        description += '*Summary:* ' + summary + '\n'
+        description += '*Log Source:* ' + source + '\n'
+        description += '*SIEM ID/s:* ' + siem_id + '\n\n'
+        description += '*First seen:* ' + str(first_seen) + '\n'
+        description += '*First detected:* ' + str(first_detected) + '\n'
+        description += '*Last seen:* ' + str(last_seen) + '\n\n'
+        description += '*AWS Region:* ' + region + '\n'
+        description += '*AWS Account:* #' + account_id + ' | ' + account_name + '\n'
+        description += '*AWS GuardDuty Finding ID/s:* ' + guardduty_id + '\n\n'
+
+        # ssh brute force use case code
+        if alert_type == 'UnauthorizedAccess:EC2/SSHBruteForce':
+
+                # define threat actor, target, category, subcategory, impact and urgency
+                threat_actor = log['data']['aws']['service']['action']['networkConnectionAction']['remoteIpDetails']['ipAddressV4']
+                target = log['data']['aws']['resource']['instanceDetails']['instanceId']
+
+                category = 'Intrusion Attempt'
+                subcategory = 'Login Attempt'
+
+                impact = '4 - Low'
+                urgency = '4 - Low'
+
+                # find if there is issue with same title
+                issue_key = slack_issues.get_issue(title, source, team)
+                if issue_key != None:
+                        # find if issue is correlated
+                        description = slack_issues.get_issue_description_by_key(issue_key)
+
+                        incident_is_correlated = False
+
+                        # issue is correlated if target or threat actor is the same
+                        for line in description.split('\n'):
+                                if 'Threat Actor/s:' in line and threat_actor in line:
+                                        incident_is_correlated = True
+                                if 'Target/s:' in line and target in line:
+                                        incident_is_correlated = True
+                else:
+                        incident_is_correlated = False
+
+                if incident_is_correlated:
+                        update = slack_issues.update_issue(issue_key, siem_id, last_seen, guardduty_id, threat_actor, target)
+                        if update:
+                                update_response = '*Issue updated:* https://jira.bleszily.com/browse/' + issue_key
+                        else:
+                                update_response = '*Update failed for issue:* https://jira.bleszily.com/browse/' + issue_key
+
+                        description += update_response
+                        return description
+
+        elif alert_type == 'Trojan:EC2/DGADomainRequest.B':
+                threat_actor = log['data']['aws']['service']['action']['dnsRequestAction']['domain']
+                target = log['data']['aws']['resource']['instanceDetails']['instanceId']
+
+                category = 'Malware'
+                subcategory = 'C&C'
+
+                impact = '3 - Medium'
+                urgency = '4 - Low'
+
+                # find if there is issue with same title
+                issue_key = slack_issues.get_issue(title, source, team)
+                if issue_key != None:
+                        # find if issue is correlated
+                        description = slack_issues.get_issue_description_by_key(issue_key)
+
+                        incident_is_correlated = False
+
+                        # issue is correlated if target is the same
+                        for line in description.split('\n'):
+                                if 'Target/s:' in line and target in line:
+                                        incident_is_correlated = True
+                else:
+                        incident_is_correlated = False
+
+                if incident_is_correlated:
+                        update = slack_issues.update_issue(issue_key, siem_id, last_seen, guardduty_id, threat_actor, target)
+                        if update:
+                                update_response = '*Issue updated:* https://jira.bleszily.com/browse/' + issue_key
+                        else:
+                                update_response = '*Update failed for issue:* https://jira.bleszily.com/browse/' + issue_key
+
+                        description += update_response
+                        return description
+        else:
+                threat_actor = ''
+                target = ''
+                category = 'Other'
+                subcategory = 'Uncategorized'
+                impact = '4 - Low'
+                urgency = '4 - Low'
+
+        description += '*Target/s:* ' + target + '\n'
+        description += '*Threat Actor/s:* ' + threat_actor + '\n'
+        description += '*Pre-analysis:* \n'
+        
+        issue_key = slack_issues.create_issue(title, village, team, first_seen, first_detected, category, subcategory, impact, urgency, description)
+
+        if issue_key is None:
+                update_response = '*Failed to create issue.*'
+        else:
+                update_response = '*Issue created:* https://jira.bleszily.com/browse/' + issue_key
+
+        description += update_response
+        
+        return description

@@ -1,0 +1,134 @@
+<!-- Local rules -->
+
+<!-- Modify it at your will. -->
+<!-- Copyright (C) 2015-2020, Wazuh Inc. -->
+
+<!-- Example -->
+<group name="local,syslog,sshd,">
+
+  <!--
+  Dec 10 01:02:02 host sshd[1234]: Failed none for root from 1.1.1.1 port 1066 ssh2
+  -->
+  <rule id="100001" level="5">
+    <if_sid>5716</if_sid>
+    <srcip>1.1.1.1</srcip>
+    <description>sshd: authentication failed from IP 1.1.1.1.</description>
+    <group>authentication_failed,pci_dss_10.2.4,pci_dss_10.2.5,</group>
+  </rule>
+  
+  <rule id="100002" level="0">
+    <if_sid>5303,5402,5501,5502,5715,5762</if_sid>
+    <description>Ignore these rules</description>
+  </rule>
+  
+  <!-- ignore health check from load balancer on OpenVPN agent -->
+  <rule id="100003" level="0">
+    <if_sid>5706</if_sid>
+    <srcip>10.106.94.232</srcip>
+    <description>Ignore health check from load balancer on OpenVPN agent.</description>
+  </rule>
+
+</group>
+
+<!-- AWS -->
+<!--
+
+Test rules
+
+
+<group name="test,">
+  <rule id="11" level="3">
+    <decoded_as>json</decoded_as>
+    <field name="example.question" negate="yes">x|y</field>
+    <description>Dynamic field example: question contain string $(example.question)</description>
+  </rule>
+</group>
+-->
+
+<!-- AWS -->
+
+<!-- SecurityHub -->
+
+<group name="amazon,aws,securityhub,low,custom_rule,">
+  <rule id="100101" level="3">
+  <field name="source">aws.securityhub</field>
+  <field name="severity">LOW</field>
+  <field name="arn" negate="yes">cis-aws-foundations-benchmark|aws-foundational-security-best-practices</field>
+  <description>SecurityHub | $(account) | $(title)</description>
+  </rule>
+</group>
+
+<group name="amazon,aws,securityhub,medium,custom_rule,">
+  <rule id="100102" level="5">
+  <field name="source">aws.securityhub</field>
+  <field name="severity">MEDIUM</field>
+  <field name="arn" negate="yes">cis-aws-foundations-benchmark|aws-foundational-security-best-practices</field>
+  <description>SecurityHub | $(account) | $(title)</description>
+  </rule>
+</group>
+
+<group name="amazon,aws,securityhub,high,custom_rule,">
+  <rule id="100103" level="8">
+  <field name="source">aws.securityhub</field>
+  <field name="severity">HIGH</field>  
+  <field name="arn" negate="yes">cis-aws-foundations-benchmark|aws-foundational-security-best-practices</field>
+  <description>SecurityHub | $(account) | $(title)</description>
+  </rule>
+</group>
+
+<!-- Security Scorecard -->
+
+<group name="scorecard,low,custom_rule,">
+  <rule id="100201" level="3">
+  <field name="source">SecurityScorecard</field>
+  <description>Security Scorecard | New Issue | $(domain)</description>
+  </rule>
+</group>
+
+<!-- Cloudflare -->
+
+<group name="cloudflare,high,oncall,custom_rule,">
+  <rule id="100250" level="12">
+  <field name="text">DDoS attack</field>
+  <description>Cloudflare | DDoS Attack</description>
+  </rule>
+</group>
+
+<!-- GuardDuty -->
+
+<group name="aws_guardduty,amazon">
+  <rule id="100260" level="12">
+  <decoded_as>json</decoded_as>
+  <field name="source">aws.guardduty</field>
+  <description>AWS GuardDuty Alert</description>
+  <options>no_full_log</options>
+  </rule>
+</group>
+
+<!-- Backup rules -->
+
+<group name="wazuh,backup,high,custom_rule,oncall,">
+  <rule id="100098" level="12">
+      <field name="task">backup_daily</field>
+      <field name="result">ERROR</field>
+      <description>Wazuh Manager | Daily backup failed</description>
+  </rule>
+  <rule id="100099" level="12">
+      <field name="task">backup_monthly</field>
+      <field name="result">ERROR</field>
+      <description>Wazuh Manager | Monthly backup failed</description>
+  </rule>
+</group>
+
+<group name="wazuh,backup,high,custom_rule,">
+  <rule id="100097" level="0">
+      <field name="task">backup_daily</field>
+      <field name="result">SUCCESS</field>
+      <description>Wazuh Manager | Daily backup succeeded</description>
+  </rule>
+  <rule id="100096" level="0">
+      <field name="task">backup_monthly</field>
+      <field name="result">SUCCESS</field>
+      <description>Wazuh Manager | Monthly backup succeeded</description>
+  </rule>
+</group>

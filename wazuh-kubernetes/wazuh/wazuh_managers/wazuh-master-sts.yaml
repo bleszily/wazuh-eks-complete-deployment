@@ -1,0 +1,255 @@
+# Copyright (C) 2019, Wazuh Inc.
+#
+# This program is a free software; you can redistribute it
+# and/or modify it under the terms of the GNU General Public
+# License (version 2) as published by the FSF - Free Software
+# Foundation.
+
+# Wazuh master StatefulSet
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: wazuh-manager-master
+  namespace: wazuh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wazuh-manager
+      node-type: master
+  serviceName: wazuh-cluster
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+        app: wazuh-manager
+        node-type: master
+      name: wazuh-manager-master
+    spec:
+      volumes:
+        - name: config
+          configMap:
+            name: wazuh-conf
+        - name: integrations
+          configMap:
+            defaultMode: 0777
+            name: integrations
+        - name: incident-reporting-folder
+          emptyDir: {}
+        - name: incident-reporting
+          configMap:
+            defaultMode: 0777
+            name: incident-reporting
+        - name: backup
+          configMap:
+            defaultMode: 0777
+            name: backup
+        - name: aws
+          configMap:
+            name: aws
+        - name: wodles
+          configMap:
+            name: wodles
+        - name: jira-cred
+          secret:
+            secretName: jira-cred
+        - name: rules
+          configMap:
+            name: rules
+        - name: filebeat-certs
+          secret:
+            secretName: indexer-certs
+        - name: wazuh-authd-pass
+          secret:
+            secretName: wazuh-authd-pass
+      securityContext:
+        fsGroup: 101
+      containers:
+        - name: wazuh-manager
+          image: 'wazuh/wazuh-manager:4.5.3'
+          resources:
+            limits:
+              cpu: 400m
+              memory: 512Mi
+          securityContext:
+            capabilities:
+              add: ["SYS_CHROOT"]
+          volumeMounts:
+            - name: config
+              mountPath: /wazuh-config-mount/etc/ossec.conf
+              subPath: master.conf
+              readOnly: true
+            # - name: config
+            #   mountPath: /var/ossec/etc/rules/local_rules.xml
+            #   subPath: local_rules.xml
+            #   readOnly: true
+            - name: filebeat-certs
+              mountPath: /etc/ssl/root-ca.pem
+              readOnly: true
+              subPath: root-ca.pem
+            - name: filebeat-certs
+              mountPath: /etc/ssl/filebeat.pem
+              subPath: filebeat.pem
+              readOnly: true
+            - name: filebeat-certs
+              mountPath: /etc/ssl/filebeat.key
+              subPath: filebeat-key.pem
+              readOnly: true
+            - name: wazuh-authd-pass
+              mountPath: /wazuh-config-mount/etc/authd.pass
+              subPath: authd.pass
+              readOnly: true
+            - name: wazuh-manager-master
+              mountPath: /var/ossec/api/configuration
+              subPath: wazuh/var/ossec/api/configuration
+            - name: wazuh-manager-master
+              mountPath: /var/ossec/etc
+              subPath: wazuh/var/ossec/etc
+            - name: wazuh-manager-master
+              mountPath: /var/ossec/logs
+              subPath: wazuh/var/ossec/logs
+            - name: wazuh-manager-master
+              mountPath: /var/ossec/queue
+              subPath: wazuh/var/ossec/queue
+            - name: wazuh-manager-master
+              mountPath: /var/ossec/var/multigroups
+              subPath: wazuh/var/ossec/var/multigroups
+            - name: wazuh-manager-master
+              mountPath: /var/ossec/integrations
+              subPath: wazuh/var/ossec/integrations
+            - name: wazuh-manager-master
+              mountPath: /var/ossec/active-response/bin
+              subPath: wazuh/var/ossec/active-response/bin
+            - name: wazuh-manager-master
+              mountPath: /var/ossec/agentless
+              subPath: wazuh/var/ossec/agentless
+            - name: wazuh-manager-master
+              mountPath: /var/ossec/wodles
+              subPath: wazuh/var/ossec/wodles
+            - name: wazuh-manager-master
+              mountPath: /etc/filebeat
+              subPath: filebeat/etc/filebeat
+            - name: wazuh-manager-master
+              mountPath: /var/lib/filebeat
+              subPath: filebeat/var/lib/filebeat
+
+            - name: integrations
+              mountPath: /var/ossec/integrations/custom-opsgenie
+              subPath: custom-opsgenie
+            - name: integrations
+              mountPath: /var/ossec/integrations/custom-slack
+              subPath: custom-slack
+            - name: integrations
+              mountPath: /var/ossec/integrations/no-alerts-check-cloudflare.py
+              subPath: no-alerts-check-cloudflare.py
+            - name: integrations
+              mountPath: /var/ossec/integrations/no-alerts-check-cloudtrail.py
+              subPath: no-alerts-check-cloudtrail.py
+            - name: integrations
+              mountPath: /var/ossec/integrations/no-alerts-check-guardduty.py
+              subPath: no-alerts-check-guardduty.py
+            - name: integrations
+              mountPath: /var/ossec/integrations/no-alerts-check-securityscorecard.py
+              subPath: no-alerts-check-securityscorecard.py
+            - mountPath: /var/ossec/integrations/incident_reporting
+              name: incident-reporting-folder
+            - name: incident-reporting
+              mountPath: /var/ossec/integrations/incident_reporting/cloudflare
+              subPath: cloudflare
+            - name: incident-reporting
+              mountPath: /var/ossec/integrations/incident_reporting/cloudtrail
+              subPath: cloudtrail
+            - name: incident-reporting
+              mountPath: /var/ossec/integrations/incident_reporting/guardduty
+              subPath: guardduty
+            - name: incident-reporting
+              mountPath: /var/ossec/integrations/incident_reporting/jira
+              subPath: jira
+            - name: incident-reporting
+              mountPath: /var/ossec/integrations/incident_reporting/securityscorecard
+              subPath: securityscorecard
+            - name: incident-reporting
+              mountPath: /var/ossec/integrations/incident_reporting/accounts.json
+              subPath: accounts.json
+            - name: aws
+              mountPath: /root/.aws/credentials
+              subPath: credentials
+            - name: aws
+              mountPath: /root/.aws/config
+              subPath: config
+            - name: backup
+              mountPath: /var/ossec/backup/backup_daily.py
+              subPath: backup_daily.py
+            - name: backup
+              mountPath: /var/ossec/backup/backup_monthly.py
+              subPath: backup_monthly.py
+            - name: rules
+              mountPath: /var/ossec/ruleset/rules/0350-amazon_rules.xml
+              subPath: 0350-amazon_rules.xml
+
+          ports:
+            - containerPort: 1515
+              name: registration
+            - containerPort: 1516
+              name: cluster
+            - containerPort: 55000
+              name: api
+          env:
+            - name: INDEXER_URL
+              value: 'https://wazuh-indexer-0.wazuh-indexer:9200'
+            - name: INDEXER_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: indexer-cred
+                  key: username
+            - name: INDEXER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: indexer-cred
+                  key: password
+            - name: FILEBEAT_SSL_VERIFICATION_MODE
+              value: 'full'
+            - name: SSL_CERTIFICATE_AUTHORITIES
+              value: /etc/ssl/root-ca.pem
+            - name: SSL_CERTIFICATE
+              value: /etc/ssl/filebeat.pem
+            - name: SSL_KEY
+              value: /etc/ssl/filebeat.key
+            - name: API_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: wazuh-api-cred
+                  key: username
+            - name: API_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wazuh-api-cred
+                  key: password
+            - name: WAZUH_CLUSTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: wazuh-cluster-key
+                  key: key
+            - name: jira_user
+              valueFrom:
+                secretKeyRef:
+                  name: jira-cred
+                  key: user
+            - name: jira_api_key
+              valueFrom:
+                secretKeyRef:
+                  name: jira-cred
+                  key: api_key
+
+  volumeClaimTemplates:
+    - metadata:
+        name: wazuh-manager-master
+        namespace: wazuh
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: wazuh-storage
+        resources:
+          requests:
+            storage: 500Mi

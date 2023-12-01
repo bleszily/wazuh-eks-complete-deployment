@@ -1,0 +1,99 @@
+# Copyright (C) 2019, Wazuh Inc.
+#
+# This program is a free software; you can redistribute it
+# and/or modify it under the terms of the GNU General Public
+# License (version 2) as published by the FSF - Free Software
+# Foundation.
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Adds wazuh namespace to all resources.
+namespace: wazuh
+
+secretGenerator:
+  - name: indexer-certs
+    files:
+      - certs/indexer_cluster/root-ca.pem
+      - certs/indexer_cluster/node.pem
+      - certs/indexer_cluster/node-key.pem
+      - certs/indexer_cluster/dashboard.pem
+      - certs/indexer_cluster/dashboard-key.pem
+      - certs/indexer_cluster/admin.pem
+      - certs/indexer_cluster/admin-key.pem
+      - certs/indexer_cluster/filebeat.pem
+      - certs/indexer_cluster/filebeat-key.pem
+  - name: dashboard-certs
+    files:
+      - certs/dashboard_http/cert.pem
+      - certs/dashboard_http/key.pem
+      - certs/indexer_cluster/root-ca.pem
+
+configMapGenerator:
+  - name: indexer-conf
+    files:
+      - indexer_stack/wazuh-indexer/indexer_conf/opensearch.yml
+      - indexer_stack/wazuh-indexer/indexer_conf/internal_users.yml
+  - name: wazuh-conf
+    files:
+      - wazuh_managers/wazuh_conf/master.conf
+      - wazuh_managers/wazuh_conf/worker.conf
+      - wazuh_managers/wazuh_conf/local_rules.xml
+  - name: dashboard-conf
+    files:
+      - indexer_stack/wazuh-dashboard/dashboard_conf/opensearch_dashboards.yml
+  - name: integrations
+    files:
+      - wazuh_managers/integrations/custom-opsgenie
+      - wazuh_managers/integrations/custom-slack
+      - wazuh_managers/integrations/no-alerts-check-cloudflare.py
+      - wazuh_managers/integrations/no-alerts-check-cloudtrail.py
+      - wazuh_managers/integrations/no-alerts-check-guardduty.py
+      - wazuh_managers/integrations/no-alerts-check-securityscorecard.py
+  - name: incident-reporting
+    files:
+      - wazuh_managers/integrations/incident_reporting/cloudflare
+      - wazuh_managers/integrations/incident_reporting/cloudtrail
+      - wazuh_managers/integrations/incident_reporting/guardduty
+      - wazuh_managers/integrations/incident_reporting/jira
+      - wazuh_managers/integrations/incident_reporting/securityscorecard
+      - wazuh_managers/integrations/incident_reporting/accounts.json
+  - name: aws
+    files:
+      - wazuh_managers/aws/credentials
+      - wazuh_managers/aws/config
+  - name: wodles
+    files:
+      - wazuh_managers/wodles/aws-s3.py
+  - name: backup
+    files: 
+      - wazuh_managers/backup/backup_daily.py
+      - wazuh_managers/backup/backup_monthly.py
+  - name: rules
+    files:
+      - wazuh_managers/rules/0350-amazon_rules.xml
+
+resources:
+  - base/wazuh-ns.yaml
+  - base/storage-class.yaml
+
+  - secrets/wazuh-api-cred-secret.yaml
+  - secrets/wazuh-authd-pass-secret.yaml
+  - secrets/wazuh-cluster-key-secret.yaml
+  - secrets/dashboard-cred-secret.yaml
+  - secrets/indexer-cred-secret.yaml
+  - secrets/aws-cred-secret.yml
+  - secrets/jira-cred-secret.yaml
+
+  - wazuh_managers/wazuh-cluster-svc.yaml
+  - wazuh_managers/wazuh-master-svc.yaml
+  - wazuh_managers/wazuh-workers-svc.yaml
+  - wazuh_managers/wazuh-master-sts.yaml
+  - wazuh_managers/wazuh-worker-sts.yaml
+
+  - indexer_stack/wazuh-indexer/indexer-svc.yaml
+  - indexer_stack/wazuh-indexer/cluster/indexer-api-svc.yaml
+  - indexer_stack/wazuh-indexer/cluster/indexer-sts.yaml
+
+  - indexer_stack/wazuh-dashboard/dashboard-svc.yaml
+  - indexer_stack/wazuh-dashboard/dashboard-deploy.yaml

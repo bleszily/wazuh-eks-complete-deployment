@@ -1,0 +1,206 @@
+#!/var/ossec/framework/python/bin/python3
+
+from importlib.util import spec_from_loader, module_from_spec
+from importlib.machinery import SourceFileLoader 
+import json
+import datetime
+from dateutil import tz
+import requests
+import os
+
+spec = spec_from_loader("slack_issues", SourceFileLoader("slack_issues", "/var/ossec/integrations/incident_reporting/jira"))
+slack_issues = module_from_spec(spec)
+spec.loader.exec_module(slack_issues)
+
+accounts_file = open('/var/ossec/integrations/incident_reporting/accounts.json', 'r')
+accounts_data = json.loads(accounts_file.read())
+accounts_file.close()
+
+from_zone = tz.gettz('UTC')
+to_zone = tz.gettz('Europe/Lisbon')
+
+headers = { "Content-Type": "application/json" }
+user = os.environ.get('jira_user').replace('\n', '')
+api_key = os.environ.get('jira_api_key').replace('\n', '')
+
+def parse(log):
+        source = 'Cloudflare'
+        siem_id = log['id']
+        summary = log['rule']['description'].split(' | ')[1] + ' @ ' + log['rule']['description'].split(' | ')[1]
+        title = 'Global | Live | Cloudflare | ' + summary
+
+        village = 'Global'
+        team = 'Global'
+
+        first_seen = datetime.datetime.strptime(log['data']['data']['start_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=from_zone).astimezone(to_zone)
+        first_detected = datetime.datetime.strptime(log['timestamp'].split('+')[0].split('.')[0], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=from_zone).astimezone(to_zone)
+        last_seen = datetime.datetime.strptime(log['data']['data']['start_time'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=from_zone).astimezone(to_zone)
+
+        description = ''
+        description += '*Summary:* ' + summary + '\n'
+        description += '*Log Source:* ' + source + '\n'
+        description += '*SIEM ID/s:* ' + siem_id + '\n\n'
+        description += '*First seen:* ' + str(first_seen) + '\n'
+        description += '*First detected:* ' + str(first_detected) + '\n'
+        description += '*Last seen:* ' + str(last_seen) + '\n\n'
+        description += '*Target/s:* ' + log['data']['data']['target_zone_name'] + '\n'
+        description += '*Threat Actor/s:* Unknown\n'
+
+        zone = log['data']['data']['target_zone_name']
+        rate = log['data']['data']['max_rate']
+
+        if 'target_host' not in log['data']['data']:
+                description += '*Pre-analysis:* An HTTP DDoS attack against the zone ' + zone + ' (' + rate + ') has been automatically detected and mitigated by Cloudflare.\n'
+        else:
+                host = log['data']['data']['target_host']
+                description += '*Pre-analysis:* An HTTP DDoS attack against the zone ' + zone + ' targeting the host ' + host + ' (' + rate + ') has been automatically detected and mitigated by Cloudflare.\n'
+        
+        category = 'Availability'
+        subcategory = 'DoS/DDoS'
+        impact = '4 - Low'
+        urgency = '4 - Low'
+
+        issue_key = slack_issues.create_issue(title, village, team, first_seen, first_detected, category, subcategory, impact, urgency, description)
+
+        if issue_key is None:
+                update_response = '*Failed to create issue.*'
+        else:
+                update_response = '*Issue created and closed:* https://jira.bleszily.com/browse/' + issue_key
+
+        description += update_response
+
+        if issue_key is None:
+                return description
+
+        ################################### DRAFT => ANALYSIS
+        update = {}
+        update['transition'] = {}
+        update['transition']['id'] = '31'
+        update_ticket_response = requests.post('https://jira.bleszily.com/rest/api/latest/issue/' + issue_key + '/transitions', data=json.dumps(update), headers=headers, auth=(user, api_key))
+
+        ################################### ANALYSIS => CONTAINMENT
+        update = {}
+        update['transition'] = {}
+        update['transition']['id'] = '101'
+
+        if 'target_host' not in log['data']['data']:
+                analysis = 'An HTTP DDoS attack against the zone ' + zone + ' (' + rate + ') has been detected on ' + str(first_seen) + 'by Cloudflare.'
+        else:
+                host = log['data']['data']['target_host']
+                analysis = 'An HTTP DDoS attack against the zone ' + zone + ' targeting the host ' + host + ' (' + rate + ') has been detected on ' + str(first_seen) + 'by Cloudflare.'
+
+        update['fields'] = {}
+        update['fields']['customfield_15016'] = analysis
+
+        update['update'] = {}
+        update['update']['comment'] = []
+        comment = {}
+        comment['add'] = {}
+        comment['add']['body'] = 'h3. *Detection & Analysis:* \n' + analysis
+        update['update']['comment'].append(comment)
+
+        update_ticket_response = requests.post('https://jira.bleszily.com/rest/api/latest/issue/' + issue_key + '/transitions', data=json.dumps(update), headers=headers, auth=(user, api_key))
+
+        ################################### CONTAINMENT => ERADICATION & RECOVERY
+        update = {}
+        update['transition'] = {}
+        update['transition']['id'] = '111'
+        containment = 'The HTTP DDoS attack was automatically mitigated by Cloudflare.'        
+        update['fields'] = {}
+        update['fields']['customfield_15016'] = containment
+
+        update['update'] = {}
+        update['update']['comment'] = []
+        comment = {}
+        comment['add'] = {}
+        comment['add']['body'] = 'h3. *Containment:* \n' + containment
+        update['update']['comment'].append(comment)
+
+        update_ticket_response = requests.post('https://jira.bleszily.com/rest/api/latest/issue/' + issue_key + '/transitions', data=json.dumps(update), headers=headers, auth=(user, api_key))
+
+        ################################### ERADICATION & RECOVERY => POST-INCIDENT ACTIVITY
+        update = {}
+        update['transition'] = {}
+        update['transition']['id'] = '241'
+        update['fields'] = {}
+        update['fields']['customfield_15016'] = 'N/A'
+
+        update['update'] = {}
+        update['update']['comment'] = []
+        comment = {}
+        comment['add'] = {}
+        comment['add']['body'] = 'h3. *Eradication & Recovery:* \nN/A'
+        update['update']['comment'].append(comment)
+
+        update_ticket_response = requests.post('https://jira.bleszily.com/rest/api/latest/issue/' + issue_key + '/transitions', data=json.dumps(update), headers=headers, auth=(user, api_key))
+
+        ################################### POST-INCIDENT ACTIVITY => RESOLUTION & CLOSURE
+        update = {}
+        update['transition'] = {}
+        update['transition']['id'] = '141'
+        update['fields'] = {}
+
+        # Exactly what happened, and at what times?
+        postactivity = first_seen.strftime('%d/%b/%Y %H:%M') + ' - DDoS attack started.\n'
+        postactivity += first_detected.strftime('%d/%b/%Y %H:%M') + ' - Attack detected and mitigated automatically by Cloudflare.'
+        update['fields']['customfield_15017'] = postactivity
+
+        # Was the documentation adequate?
+        update['fields']['customfield_15018'] = 'Yes'
+
+        # Were any steps or actions taken that might have inhibited the recovery?
+        update['fields']['customfield_15019'] = 'N/A'
+
+        # Improvements
+        update['fields']['customfield_15020'] = 'N/A'
+
+        # Close Code
+        update['fields']['customfield_15021'] = {}
+        update['fields']['customfield_15021']['value'] = 'Solved (Permanently)'
+
+        # Root cause
+        update['fields']['customfield_15022'] = {}
+        update['fields']['customfield_15022']['value'] = 'Security Event'
+
+        # steps Taken
+        steps = 'Detection and mitigation were performed on Cloudflare\'s end.\nThe SOC team only opened and closed the incident.'
+        update['fields']['customfield_15023'] = steps
+
+        # outage
+        update['fields']['customfield_15024'] = {}
+        update['fields']['customfield_15024']['value'] = 'No Outage'
+
+        # recurring incident
+        update['fields']['customfield_15025'] = {}
+        update['fields']['customfield_15025']['value'] = 'Yes'
+
+        # false positive
+        update['fields']['customfield_15026'] = {}
+        update['fields']['customfield_15026']['value'] = 'No'
+
+        # control need update
+        update['fields']['customfield_15027'] = {}
+        update['fields']['customfield_15027']['value'] = 'No'
+
+        # improvement needed
+        update['fields']['customfield_15028'] = {}
+        update['fields']['customfield_15028']['value'] = 'No'
+
+        # communication issue
+        update['fields']['customfield_15030'] = {}
+        update['fields']['customfield_15030']['value'] = 'No'
+
+        # procedure needs update
+        update['fields']['customfield_15031'] = {}
+        update['fields']['customfield_15031']['value'] = 'No'
+
+        update['update'] = {}
+        update['update']['comment'] = []
+        comment = {}
+        comment['add'] = {}
+        comment['add']['body'] = 'h3. *Resolution & Closure:* \n' + steps
+        update['update']['comment'].append(comment)
+
+        update_ticket_response = requests.post('https://jira.bleszily.com/rest/api/latest/issue/' + issue_key + '/transitions', data=json.dumps(update), headers=headers, auth=(user, api_key))
+
+        return description

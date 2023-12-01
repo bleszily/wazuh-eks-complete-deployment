@@ -1,0 +1,50 @@
+<group name="amazon,aws,cloudtrail,high,custom_rule,oncall,">
+  <rule id="100110" level="12">
+    <field name="eventType">AwsConsoleSignIn</field>
+    <field name="userIdentity.type">Root</field>
+    <field name="eventName">ConsoleLogin</field>
+    <description>CloudTrail | Root console login $(responseElements.ConsoleLogin)</description>
+  </rule>
+  
+  <rule id="100111" level="12">
+    <field name="eventType">AwsApiCall</field>
+    <field name="userIdentity.type">Root</field>
+    <description>CloudTrail | Root credential usage</description>
+  </rule>
+  
+  <rule id="100112" level="12">
+    <field name="eventType">AwsConsoleSignIn</field>
+    <field name="userIdentity.type">Root</field>
+    <field name="eventName">PasswordUpdated</field>
+    <description>CloudTrail | Root password updated</description>
+  </rule>
+  
+  <rule id="100113" level="12">
+    <field name="eventType">AwsConsoleSignIn</field>
+    <field name="userIdentity.type">Root</field>
+    <field name="eventName">PasswordRecoveryCompleted</field>
+    <description>CloudTrail | Root password recovery $(responseElements.PasswordRecoveryCompleted)</description>
+  </rule>
+  
+  <rule id="100114" level="12">
+    <field name="eventName">CreateAccount</field>
+    <description>CloudTrail | New AWS account created</description>
+  </rule>
+</group>
+
+<group name="amazon,aws,cloudtrail,low,custom_rule,">
+  <rule id="100115" level="3">
+    <field name="eventName">CreateUser</field>
+    <description>CloudTrail | New IAM user created</description>
+  </rule>
+  
+  <rule id="100116" level="3">
+    <field name="eventName">UpdateLoginProfile</field>
+    <description>CloudTrail | IAM user password changed</description>
+  </rule>
+  
+  <rule id="100117" level="3">
+    <field name="eventName">CreateAccessKey</field>
+    <description>CloudTrail | New access key created</description>
+  </rule>
+</group>

@@ -1,0 +1,176 @@
+#!/var/ossec/framework/python/bin/python3
+
+import json
+import requests
+import os
+
+headers = { "Content-Type": "application/json" }
+user = os.environ.get('jira_user').replace('\n', '')
+api_key = os.environ.get('jira_api_key').replace('\n', '')
+
+def get_issue_description_by_key(issue_key):
+    get_ticket_response = requests.get("https://jira.bleszily.com/rest/api/latest/issue/" + issue_key, headers=headers, auth=(user, api_key))
+    
+    if 'key' not in json.loads(get_ticket_response.text):
+        return None
+
+    description = json.loads(get_ticket_response.text)['fields']['description']
+
+    if '\xa0' in description:
+        description = description.replace('\xa0', ' ')
+
+    if '\r' in description:
+        description = description.replace('\r', ' ')
+
+    return description
+
+def get_issue(title, source, team):
+    issue_title = team + ' | Live | ' + title
+
+    jqls = {}
+    jqls['jql'] = "project = \"Cyber Defense\" AND issuetype = \"Security Incident\" AND summary ~ \"" + issue_title + "\" AND (status = \"Draft\" OR status = \"Analysis\" OR status = \"Containment\" OR status = \"Eradication & Recovery\" OR status = \"Review\")"
+
+    get_ticket_response = requests.get("https://jira.bleszily.com/rest/api/latest/search", params=jqls, headers=headers, auth=(user, api_key))
+
+    if len(json.loads(get_ticket_response.text)['issues']) != 0:
+        return str(json.loads(get_ticket_response.text)['issues'][0]['key'])
+    else:
+        return None
+
+def create_issue(title, village, team, first_seen, first_detected, category, subcategory, impact, urgency, description):
+
+    ticket = {}
+    ticket['fields'] = {}
+
+    ### fields
+    # project
+    ticket['fields']['project'] = {}
+    ticket['fields']['project']['key'] = 'AFRSECOPS'
+
+    # issue type
+    ticket['fields']['issuetype'] = {}
+    ticket['fields']['issuetype']['name'] = 'Security Incident'
+
+    # summary
+    ticket['fields']['summary'] = team + ' | Live | ' + title
+
+    # assignment group 
+    ticket['fields']['customfield_15004'] = {}
+    ticket['fields']['customfield_15004']['name'] = 'AFRSECOPS'
+
+    # contact type
+    ticket['fields']['customfield_15005'] = {}
+    ticket['fields']['customfield_15005']['value'] = 'Security Event'
+
+    # notification time
+    ticket['fields']['customfield_15500'] = first_detected.strftime('%Y-%m-%dT%H:%M:00.000+0200')
+
+    # notification time
+    ticket['fields']['customfield_15501'] = first_seen.strftime('%Y-%m-%dT%H:%M:00.000+0200')
+
+    # category and subcategory
+    ticket['fields']['customfield_15007'] = {}
+    ticket['fields']['customfield_15007']['value'] = category
+    ticket['fields']['customfield_15007']['child'] = {}
+    ticket['fields']['customfield_15007']['child']['value'] = subcategory
+
+    # security impact
+    ticket['fields']['customfield_15008'] = {}
+    ticket['fields']['customfield_15008']['value'] = impact
+
+    # service impacted
+    ticket['fields']['customfield_15013'] = {}
+    ticket['fields']['customfield_15013']['value'] = 'General'
+
+    # urgency
+    ticket['fields']['customfield_15012'] = {}
+    ticket['fields']['customfield_15012']['value'] = urgency
+
+    # environment
+    ticket['fields']['customfield_15009'] = {}
+    ticket['fields']['customfield_15009']['value'] = 'Live'
+
+    ticket['fields']['description'] = description
+
+    # country secops
+    ticket['fields']['customfield_15034'] = []
+    ticket['fields']['customfield_15034'].append({'value' : 'ALL'})
+
+    # business unit
+    ticket['fields']['customfield_15200'] = []
+    ticket['fields']['customfield_15200'].append({'value' : village})
+
+    response = requests.post("https://jira.bleszily.com/rest/api/latest/issue", data=json.dumps(ticket), headers=headers, auth=(user, api_key))
+    
+    issue_key = json.loads(response.text)['key']
+
+    if int(response.status_code) < 200 or int(response.status_code) > 299:
+        return None
+    else:
+        return issue_key
+
+
+def update_issue(issue_key, siem_id, last_seen, guardduty_id, threat_actor, target):
+
+    last_seen = str(last_seen)
+
+    get_ticket_response = requests.get("https://jira.bleszily.com/rest/api/latest/issue/" + issue_key + "?fields=description", headers=headers, auth=(user, api_key))
+
+    old_description = json.loads(get_ticket_response.text)['fields']['description']
+
+    if '\xa0' in old_description:
+        old_description = old_description.replace('\xa0', ' ')
+
+    if '\r' in old_description:
+        old_description = old_description.replace('\r', ' ')
+
+    new_description = ''
+
+    for line in old_description.split('\n'):
+
+        new_line = line + '\n'
+        line = line.replace('\n', '').rstrip(' ')
+
+        if line.startswith('*Last seen:*') or line.startswith('{*}Last seen:{*}'):
+            new_line = '*Last seen:* ' + last_seen + '\n'
+        
+        if line.startswith('*Target/s:*') or line.startswith('{*}Target/s:{*}'):
+            if target not in line:
+                if line.endswith(':*'):
+                    new_line = line + ' ' + target + '\n'
+                else:
+                    new_line = line + ', ' + target + '\n'
+
+        if line.startswith('*Threat Actor/s:*') or line.startswith('{*}Threat Actor/s:{*}'):
+            if threat_actor not in line:
+                if line.endswith(':*'):
+                    new_line = line + ' ' + threat_actor + '\n'
+                else:
+                    new_line = line + ', ' + threat_actor + '\n'
+
+        if line.startswith('*SIEM ID/s:*') or line.startswith('{*}SIEM ID/s:{*}'):
+            if siem_id not in line:
+                if line.endswith(':*'):
+                    new_line = line + ' ' + siem_id + '\n'
+                else:
+                    new_line = line + ', ' + siem_id + '\n'
+
+        if line.startswith('*AWS GuardDuty Finding ID/s:*') or line.startswith('{*}AWS GuardDuty Finding ID/s:{*}'):
+            if guardduty_id not in line:
+                if line.endswith(':*'):
+                    new_line = line + ' ' + guardduty_id + '\n'
+                else:
+                    new_line = line + ', ' + guardduty_id + '\n'
+
+        new_description += new_line
+
+    update = {}
+    update['fields'] = {}
+    update['fields']['description'] = new_description
+
+    update_ticket_response = requests.put("https://jira.bleszily.com/rest/api/latest/issue/" + issue_key, data=json.dumps(update), headers=headers, auth=(user, api_key))
+
+    if int(update_ticket_response.status_code) < 200 or int(update_ticket_response.status_code) > 299:
+        return False
+    else:
+        return True
